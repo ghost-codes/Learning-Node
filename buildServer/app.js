@@ -12,8 +12,12 @@ app.set('views', './buildServer/views');
 app.listen(3000);
 
 app.get('/', (req, res) => {
-    // res.send('<p>home page</p>');
-    res.render('index', { title: 'Home' });
+    const blogs = [
+        { title: 'Yoshi finds eggs', snippet: 'Lorem ipsum dolor sit amet consectetur' },
+        { title: 'Mario finds stars', snippet: 'Lorem ipsum dolor sit amet consectetur' },
+        { title: 'How to defeat bowser', snippet: 'Lorem ipsum dolor sit amet consectetur' },
+    ];
+    res.render('index', { title: 'Home', blogs });
 });
 
 //about call
@@ -24,7 +28,7 @@ app.get('/about', (req, res) => {
 
 //redirect
 app.get('/blogs/create', (req, res) => {
-    res.render('create', { title: 'Create' });
+    res.render('create', { title: 'Create New Blog' });
 });
 
 //404 requests
