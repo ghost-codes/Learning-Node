@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
+const Blog = require('./models/blog');
 
 //express app
 const app = express();
@@ -22,6 +23,27 @@ app.set('views', './buildServer/views');
 app.use(express.static('buildServer/public'))
 app.use(morgan('dev'));
 
+
+//mongoose and mongo sandbox routes
+
+app.get('/add-blog', (req, res) => {
+    const blog = new Blog({
+        title: 'new Blog',
+        snippet: 'about my new blog',
+        body: 'Duis deserunt ipsum aliqua voluptate incididunt est elit labore duis proident. Dolore mollit non est irure proident est veniam voluptate. Eu non sunt sint ea ullamco occaecat cillum sunt nulla adipisicing est officia. Laboris ullamco laboris labore laborum cupidatat laborum officia sint amet pariatur.'
+    });
+
+    blog.save().then(result => res.send(result)).catch(err => console.log(err));
+});
+
+app.get('/all-blogs', (req, res) => {
+    Blog.find().then(result => res.send(result)).catch(err => console.log(err));
+});
+
+app.get('/single-blog', (req, res) => {
+    Blog.findById('5fdf69e513b5844504ff37e9')
+        .then(result => res.send(result)).catch(err => console.log(err));
+})
 
 app.get('/', (req, res) => {
     const blogs = [
