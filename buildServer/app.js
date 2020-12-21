@@ -11,6 +11,7 @@ const dbURI = 'mongodb+srv://admin:test1234@nodetuts.pxhce.mongodb.net/nodeTuts?
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((result) => {
         app.listen(3000);
+        console.log("Listening to Port 3000");
     }).catch((err) => console.log(err));
 //register view engine
 app.set('view engine', 'ejs');
@@ -20,7 +21,8 @@ app.set('views', './buildServer/views');
 //listen for requests
 
 
-app.use(express.static('buildServer/public'))
+app.use(express.static('buildServer/public'));
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
 
@@ -43,6 +45,30 @@ app.get('/blogs', (req, res) => {
         }).catch(err => console.log(err));
 });
 
+app.post('/blogs', (req, res) => {
+
+    const blog = new Blog(req.body);
+    blog.save().then(
+        result => res.redirect('/')
+    ).catch(err => console.log(err));
+});
+
+app.get('/blogs/:id', (req, res) => {
+    const id = req.params.id;
+    Blog.findById(id).then(
+        result => res.render('details', { blog: result, title: "Blog Details" })
+    ).catch(err => console.log(err));
+});
+
+app.delete('/blogs/:id', (req, res) => {
+    const id = req.params.id;
+    Blog.findByIdAndDelete(id)
+        .then(result => {
+            res.json({ redirect: '/blogs' });
+        })
+        .catch(err => console.log(err));
+});
+
 
 //create blogs
 app.get('/blogs/create', (req, res) => {
@@ -54,6 +80,4 @@ app.use((req, res) => {
 
     res.status(404).render('404', { title: '404' });
 })
-// app.get('/', (req, res) => {
-//     res.send('<p>home page</p>');
-// });
+
